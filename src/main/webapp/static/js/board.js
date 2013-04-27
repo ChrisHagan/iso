@@ -76,19 +76,23 @@ function drawAttainableRing(c,p){
         if(r.parent == p.ring){
             if(Math.abs(p.arcExtent - r.arcExtent) < threshold){
                 var attainableWorldCoords = localToWorld(r);
-		var reflectionOffset = degreesToRadians(180);
+                var reflectionOffset = degreesToRadians(180);
                 c.beginPath();
                 c.arc(
                     attainableWorldCoords.x,
                     attainableWorldCoords.y,
                     r.radius,
-                    p.arcExtent - threshold / 2 + reflectionOffset,
-                    p.arcExtent + threshold / 2 + reflectionOffset);
+                    r.arcExtent + reflectionOffset,
+                    r.arcExtent - degreesToRadians(50) + reflectionOffset,
+                    true);
                 c.stroke();
             }
         };
     }
 }
+var style = {
+    orbit:"red"
+};
 function drawPlayer(c){
     return function(i,p){
         var r = graph.rings[p.ring];
@@ -101,13 +105,13 @@ function drawPlayer(c){
         var focusWorldCoords = localToWorld(focus);
 
         var orbitExtent = degreesToRadians(30);
-        c.strokeStyle = "black";
+        c.strokeStyle = style.orbit;
         c.beginPath();
         c.arc(
             focusWorldCoords.x,
             focusWorldCoords.y,
             r.radius,
-            p.arcExtent - orbitExtent,
+            p.arcExtent,
             p.arcExtent + orbitExtent
         );
         c.stroke();
@@ -127,7 +131,8 @@ function tickPlayer(p){
 function draw(b){
     requestAnimationFrame(draw);
     var c = board[0].getContext("2d");
-    c.clearRect(0,0,view.width,view.height);
+    c.fillStyle = "black";
+    c.fillRect(0,0,view.width,view.height);
 
     $.map(graph.players,tickPlayer);
     $.each(graph.rings,drawRing(c));
@@ -156,6 +161,8 @@ resources.ready = function(){
     view.height = board.height();
     addRing(200,0,1);
     addRing(100,0,4);
+    addRing(80,0,2);
+    addRing(200,0,5);
     join("player",0,Math.PI);
     requestAnimationFrame(draw);
 };
