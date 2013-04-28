@@ -3,6 +3,8 @@ iso
 
 This is a team based game, running on scala Lift 2.5RC5.
 
+[The girls explain](http://youtu.be/_dHKlEpCxOk)
+
 Once upon a time, there was a generation ship, going to war across the galaxy.
 
 After thousands of years of transit, the humans had all died off.  Leaving, Red Dwarf style, an Artificial Intelligence keeping the lights on and a vast society of cats.  Those cats who couldn't learn to use a can opener died.  After generations, the smartest cats had learned to use the computers and fabricators of the ship.  They discovered what the ship's mission was.

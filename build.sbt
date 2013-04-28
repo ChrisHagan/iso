@@ -7,8 +7,8 @@ organization := "net.liftweb"
 scalaVersion := "2.9.1"
 
 resolvers ++= Seq("snapshots"     at "http://oss.sonatype.org/content/repositories/snapshots",
-                "releases"        at "http://oss.sonatype.org/content/repositories/releases"
-                )
+  "releases"        at "http://oss.sonatype.org/content/repositories/releases"
+)
 
 seq(com.github.siasia.WebPlugin.webSettings :_*)
 
@@ -28,3 +28,4 @@ libraryDependencies ++= {
   )
 }
 
+port in container.Configuration := 8081
