@@ -50,6 +50,7 @@ var resources = {
     pending:0
 };
 function join(name,ring,arcExtent){
+    var unitSpeed = degreesToRadians(2);
     graph.players[name] = {
         id:name,
         ring:ring,
@@ -58,7 +59,8 @@ function join(name,ring,arcExtent){
         height:36,
         jumping:false,
         img:resources.boat,
-        speed:degreesToRadians(2)
+        unitSpeed:unitSpeed,
+        speed:unitSpeed
     };
 }
 function localToWorld(d){
@@ -72,21 +74,6 @@ function drawRing(c){
         var worldC = localToWorld(r);
         var p = resources.planet;
         var side = r.radius / 5;
-        c.strokeStyle = style.orbit;
-        $.each(r.links,function(k,v){
-            c.beginPath();
-            c.arc(worldC.x,
-                  worldC.y,
-                  r.radius - 20,
-                  v-0.1,
-                  v+0.1);
-            c.stroke();
-        });
-        c.fillStyle = "white";
-        c.font = "bold 16px Arial";
-        c.fillText(""+r.id,
-                   worldC.x,
-                   worldC.y - 30);
         c.drawImage(p,
                     worldC.x - side / 2,
                     worldC.y - side / 2,
@@ -105,8 +92,8 @@ function isConnected(r1,r2){
 }
 function playerLocalCoords(player,pRing){
     return {
-	x:pRing.x + pRing.radius * Math.cos(player.arcExtent),
-	y:pRing.y + pRing.radius * Math.sin(player.arcExtent)
+        x:pRing.x + pRing.radius * Math.cos(player.arcExtent),
+        y:pRing.y + pRing.radius * Math.sin(player.arcExtent)
     };
 }
 function playerToRingDistance(player,pRing,ring){
@@ -138,7 +125,8 @@ function drawAttainableRing(c,p){
                 attainableWorldCoords.y,
                 r.radius,
                 gradientToPlayerRing,
-                gradientToPlayerRing - threshold);
+                gradientToPlayerRing - degreesToRadians(50),
+                true);
             c.stroke();
         }
     };
@@ -165,14 +153,18 @@ function drawPlayer(c){
 function clampToCircle(radians){
     return radians % degreesToRadians(360);
 }
+function ringSpeed(ring){
+    return graph.rings[0].radius / ring.radius;
+}
 function tickPlayer(p){
     if(p.jumping){
         var attainableRings = _.values(graph.rings).filter(ringChecker(p));
         if(attainableRings.length > 0){
             var pRing = graph.rings[p.ring];
             var newRing = attainableRings[0];
-            p.speed *= -1;
-            p.arcExtent = newRing.links[p.ring];
+            var localSpeed = p.unitSpeed * ringSpeed(newRing);
+            p.speed = p.speed < 0 ? localSpeed : -localSpeed;
+            p.arcExtent = newRing.links[p.ring] + p.speed;
             p.ring = newRing.id;
             p.jumping = false;
         }
